@@ -17,5 +17,7 @@ def profile_page( request, user_id=None ):
 		user = UserProfile.get(pk=user_id)
 	else:
 		user = request.user
+	if( not user ):
+		return redirect( "/" )
 
-	return render( "UserProfile/profile.html" )
+	return render( request, "UserProfile/profile.html" )

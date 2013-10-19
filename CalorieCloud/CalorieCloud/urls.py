@@ -14,5 +14,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', 'CalorieCloud.core.views.home_page', name='home_page')
+    url(r'^$', 'CalorieCloud.core.views.home_page', name='home_page'),
+    url(r'^user/', include('CalorieCloud.apps.UserProfile.urls')),
 )
