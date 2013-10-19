@@ -131,7 +131,8 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'CalorieCloud.core',
     'CalorieCloud.apps.UserProfile',
-    'CalorieCloud.apps.Transactions'
+    'CalorieCloud.apps.Transactions',
+    'CalorieCloud.apps.Events',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
