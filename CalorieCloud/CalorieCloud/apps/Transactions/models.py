@@ -5,11 +5,20 @@ from django.contrib.auth.models import User
 class Transaction(models.Model):
 	"""
 	Description: Keeps track of all information from a Transaction
+
+	attributes:
+		name (string) - donor's name
+		email (string) - donor's email address
+		time (DateTime) - time of Transaction
+		donation_amount (float) - the amount of money the donor is donating
+		calorie_amount (float) - the amount of calories the donor wants the fund
+		recipient (FK) - the user getting funded
 	"""
 	name = models.CharField(max_length=254)
 	email = models.CharField(max_length=254)
 	time = models.DateTimeField()
-	amount = models.FloatField()
+	calorie_amount = models.FloatField()
+	donation_amount = models.FloatField()
 	recipient = models.ForeignKey(User)	
 
 	def __str__(self):
