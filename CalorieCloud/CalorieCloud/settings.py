@@ -167,6 +167,7 @@ LOGGING = {
     }
 }
 
+LOGIN_URL = "/user/login"
 
 AUTH_USER_MODEL = 'UserProfile.UserProfile'
 AUTH_PROFILE_MODULE = 'UserProfile.UserProfile'

@@ -9,6 +9,7 @@ import datetime, urllib as urllib2, json
 
 User = get_user_model()
 
+@login_required
 def eventList(request, flash=False, flash_negative=False):
 	group_list = request.user.memberships.all()
 	events_list = []
@@ -16,14 +17,17 @@ def eventList(request, flash=False, flash_negative=False):
 		events_list.extend(group.event_set.all())
 	return render(request, "Events/event_list.html", {"events_list" : events_list})
 
+@login_required
 def index(request, event_id, flash=False, flash_negative = False):
 	event = Event.objects.get(pk=event_id)
 	return render(request, "Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative, "event" : event})
 
+@login_required
 def respondToEventCreation(request, flash=False, flash_negative=False):
 	groups = Group.objects.filter(owner = request.user)
 	return render(request, "Events/event_creation.html", { "flash" : flash, "flash_negative" : flash_negative, "groups" : groups })
 
+@login_required
 def eventCreation(request, flash=False, flash_negative=False):
 	if (request.method == "GET"):
 		return respondToEventCreation(request)

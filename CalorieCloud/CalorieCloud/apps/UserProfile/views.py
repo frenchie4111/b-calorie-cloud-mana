@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate as auth, login as auth_login, logou
 
 User = get_user_model()
 
+@login_required
 def profile_page( request, user_id=None ):
 	"""
 		Description:
@@ -60,6 +61,7 @@ def logout( request ):
 	auth_logout( request )
 	return redirect( "/" )
 
+@login_required
 def link_jawbone( request ):
 	if( request.method == "GET" ):
 		if( request.user.x_id ):
@@ -87,9 +89,7 @@ def update_calories( request ):
 	user.save()
 	return render( request, "core/home_page.html", { "flash" : str(res_dict["data"]["data"][0][1]["m_calories"]) } )
 
-def get_calorie_count( request ):
-	pass
-
+@login_required
 def get_user_info( code ):
 	req = urllib2.Request( "https://jawbone.com/auth/oauth2/token/?client_id=6-jb89a0fSQ&client_secret=30f5af7938b1e51ee6e498c07641b33743e972ba&grant_type=authorization_code&code=" + code )
 	res = urllib2.urlopen( req )

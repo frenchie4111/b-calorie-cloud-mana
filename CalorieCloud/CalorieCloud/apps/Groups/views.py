@@ -3,6 +3,7 @@ from CalorieCloud.apps.Groups.models import Group
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+@login_required
 def create( request ):
 	if( request.method == "GET" ):
 		return render( request, "Groups/create.html" )
@@ -14,6 +15,7 @@ def create( request ):
 
 		return render( request, "Groups/create.html", { "flash" : "Created Group" } )
 
+@login_required
 def group( request, group_id ):
 	if( request.method == "POST" ):
 		new_memeber_search = User.objects.filter( email=request.POST["email"] )
