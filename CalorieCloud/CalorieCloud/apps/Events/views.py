@@ -9,6 +9,12 @@ import datetime, urllib as urllib2, json
 
 User = get_user_model()
 
+def eventList(request, flash=False, flash_negative=False):
+	group_list = request.user.memberships.all()
+	events_list = []
+	for group in group_list:
+		events_list.extend(group.event_set.all())
+	return render(request, "Events/event_list.html", {"events_list" : events_list})
 
 def index(request, event_id, flash=False, flash_negative = False):
 	event = Event.objects.get(pk=event_id)
@@ -35,5 +41,4 @@ def eventCreation(request, flash=False, flash_negative=False):
 
 		else:
 			event = Event.objects.create(owner=owner, group=group, description=description, target_calories=target_calories, target_date=target_date, deadline=deadline)
-			event.save()
-			return render(request,"Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative})
+			return render(request, "Events/index.html", { "flash" : flash, "flash_negative" : flash_negative, "event" : event})
