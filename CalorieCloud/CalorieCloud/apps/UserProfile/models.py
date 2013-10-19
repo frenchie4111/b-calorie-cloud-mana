@@ -1,13 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager, PermissionsMixin
-# Create your models here.
+import datetime
 
 class UserProfileManager( BaseUserManager ):
 	"""
 	Description: User Profile Management
 	"""
 
-	def create_user( self, x_id, first_name, last_name, calories, image, last_updated, calories_paid):
+	def create_user( self, email, x_id="", first_name="", last_name="", calories=0, image="", last_updated=datetime.datetime.now(), calories_paid=0, password=None):
 		"""
 		Description: creates a client user
 
@@ -26,9 +26,10 @@ class UserProfileManager( BaseUserManager ):
 		user = self.model( x_id=x_id, first_name=first_name, last_name=last_name, calories=calories, image=image, last_updated=laste_updated, calories_paid=calories_paid)
 		user.is_admin = False
 		user.save()
+		user.set_password("blank")
 		return user
 
-	def create_superuser( self, x_id, first_name, last_name, calories, image, last_updated, calories_paid ):
+	def create_superuser( self, email, x_id="", first_name="", last_name="", calories=0, image="", last_updated=datetime.datetime.now(), calories_paid=0, password=None ):
 		"""
 		Description: creates an admin user
 		pre:
@@ -45,6 +46,7 @@ class UserProfileManager( BaseUserManager ):
 		"""
 		user = self.model( x_id=x_id, first_name=first_name, last_name=last_name, calories=calories, image=image, last_updated=last_updated, calories_paid=calories_paid )
 		user.is_admin = True
+		user.set_password(password)
 		user.save()
 		return user
 
@@ -52,7 +54,8 @@ class UserProfile( AbstractBaseUser, PermissionsMixin ):
 	"""
 	Description: User's profile information
 	"""
-	x_id = models.CharField(max_length=254, unique=True)
+	email = models.CharField(max_length=254, unique=True)
+	x_id = models.CharField(max_length=254)
 	first_name = models.CharField( max_length=254 )
 	last_name = models.CharField( max_length=254 )
 	image = models.CharField( max_length=254 ) 
@@ -64,6 +67,8 @@ class UserProfile( AbstractBaseUser, PermissionsMixin ):
 
 	is_admin = models.BooleanField( default=False )
 
+	USERNAME_FIELD = 'email'
+
 	def is_staff( self ):
 		return self.is_admin
 	def is_active( self ):
@@ -73,6 +78,6 @@ class UserProfile( AbstractBaseUser, PermissionsMixin ):
 	def has_module_perms( self, app_label ):
 		return self.is_admin
 	def get_username( self ):
-		return self.email
+		return self.x_id
 	def get_short_name( self ):
 		return self.first_name + " " + self.last_name

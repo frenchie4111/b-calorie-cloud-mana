@@ -1,6 +1,13 @@
 from CalorieCloud.apps.UserProfile.models import UserProfile
 from CalorieCloud.helpers import render, redirect
 import urllib2, json
+from django.contrib.auth import get_user_model
+import datetime
+
+from django.contrib.auth import authenticate as auth, login as auth_login, logout as auth_logout
+
+User = get_user_model()
+
 def profile_page( request, user_id=None ):
 	"""
 		Description:
@@ -23,9 +30,41 @@ def profile_page( request, user_id=None ):
 
 	return render( request, "UserProfile/profile.html" )
 
-def login( request ):
-	# Check if expired!
-	req = urllib2.Request( "https://jawbone.com/auth/oauth2/token/?client_id=6-jb89a0fSQ&client_secret=30f5af7938b1e51ee6e498c07641b33743e972ba&grant_type=authorization_code&code=" + request.GET["code"] )
+def register( request ):
+	if( request.method == "GET" ):
+		return render( request, "UserProfile/register.html" )
+	elif( request.method == "POST" ):
+		new_user = User( email=request.POST["username"] )
+		new_user.first_name = request.POST["first_name"]
+		new_user.last_name = request.POST["last_name"]
+		new_user.calories = 0
+		new_user.calories_paid = 0
+		new_user.last_updated = datetime.datetime.now()
+		if( request.POST["password"] != request.POST["password2"] ):
+			return render( request, "UserProfile/register.html", { "flash" : "Passwords did not match", "flash_negative" : True } )
+		new_user.set_password( request.POST["password"] )
+		new_user.save()
+
+		auth_user = auth( email=request.POST["username"], password=request.POST["password"] )
+		auth_login( request, auth_user )
+
+		return redirect( "/user/link_jawbone" )
+
+def link_jawbone( request ):
+	if( request.method == "GET" ):
+		if( "code" in request.GET ): # Response from Jawbone
+			get_user_info( request.GET["code"] )
+			user = request.user
+			user.x_id = info["meta"]["user_xid"]
+			user.image = info["data"]["image"]
+			user.save()
+		else: #Otherwise do this
+			return render( request, "UserProfile/link_jawbone.html")
+	elif( request.method == "POST" ):
+		pass
+
+def get_user_info( code ):
+	req = urllib2.Request( "https://jawbone.com/auth/oauth2/token/?client_id=6-jb89a0fSQ&client_secret=30f5af7938b1e51ee6e498c07641b33743e972ba&grant_type=authorization_code&code=" + code )
 	res = urllib2.urlopen( req )
 
 	res_dict = json.loads(res.read())
@@ -35,7 +74,6 @@ def login( request ):
 	info_req.add_header( "Accept", "pplication/json")
 	info_req.add_header( "Authorization", "Bearer " + res_dict["access_token"] )
 	info_res = urllib2.urlopen( info_req )
+	info_dict = json.loads(info_res.read())
 
-	user = 
-
-	return render( request, "UserProfile/login.html", { "flash" : info_res.read() } )
+	return info_dict

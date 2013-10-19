@@ -32,7 +32,7 @@ def render( request, page, vars={} ):
 			Returns HTTPResponse with the html template rendered
 	"""
 	signed_in = request.user.is_authenticated()
-	default_values = { "child" : page, "request" : request, "signed_in" : signed_in, "username" : request.user.email if (signed_in) else False }
+	default_values = { "child" : page, "request" : request, "signed_in" : signed_in }
 
 	varsWithChild = dict(list(default_values.items()) + list(vars.items()))
 	return old_render( request, "main.html", varsWithChild )
