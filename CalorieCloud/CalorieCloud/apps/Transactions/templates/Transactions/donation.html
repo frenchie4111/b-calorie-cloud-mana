@@ -1,12 +1,27 @@
-<div class='center'>
-<h2> Donation </h2>
-	<div>
-		<input name="credit_card_num" onfocus="if (this.value=='Credit Card #') this.value = ''" onblur="if (this.value=='') this.value = 'Credit Card #'" type="text" value="Credit Card #">
-	</div>
 
-	<div>
-	Recipient's Total Calories Burned: <br />
-	<input name="calorie_amount" type="text" style="editable:False" value="{{ resp.calories }}">
-	</div>
+<div class='center content_box'>
+<h1> Donation </h1>
+<br/>
+	<form method='post' action=''>
+	{% csrf_token %}
+		<div>
+			<input name="credit_card_num" onfocus="if (this.value=='Credit Card #') this.value = ''" onblur="if (this.value=='') this.value = 'Credit Card #'" type="text" value="Credit Card #">
+		</div>
+		<br/>
+		<div>
+		<h2>
+		Recipient's Total Calories Burned:
+		{{recipient.calories}}</h2>
+		</div>
+		<br/>
+		<div>
+			$<input name="donation_amount" onfocus="if (this.value=='Donation Amount') this.value = ''" onblur="if (this.value=='') this.value = 'Donation Amount'" type="text" value="Donation Amount"> USD
+		</div>
+		<br/>
+		<div class="center">
+				<input type='submit' />
+		</div>
 
+		<div id="AmazonPayButton"/>
+	</form>
 </div>

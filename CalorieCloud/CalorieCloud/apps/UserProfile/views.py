@@ -1,6 +1,6 @@
 from CalorieCloud.apps.UserProfile.models import UserProfile
 from CalorieCloud.helpers import render, redirect
-import urllib2, json
+import urllib as urllib2, json
 from django.contrib.auth import get_user_model
 import datetime
 
