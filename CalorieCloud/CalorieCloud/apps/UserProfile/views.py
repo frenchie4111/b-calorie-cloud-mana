@@ -1,5 +1,5 @@
 from CalorieCloud.apps.UserProfile.models import UserProfile
-
+from CalorieCloud.helpers import render, redirect
 def profile_page( request, user_id=None ):
 	"""
 		Description:
@@ -17,3 +17,5 @@ def profile_page( request, user_id=None ):
 		user = UserProfile.get(pk=user_id)
 	else:
 		user = request.user
+
+	return render( "UserProfile/profile.html" )
