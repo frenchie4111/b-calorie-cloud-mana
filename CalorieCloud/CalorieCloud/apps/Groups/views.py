@@ -12,7 +12,10 @@ def create( request ):
 		if not "name" in request.POST:
 			return render( request, "Groups/create.html", { "flash" : "Did not fill in name" } )
 
-		Group( name=request.POST["name"], owner=request.user ).save()
+		group = Group( name=request.POST["name"], owner=request.user )
+		group.save()
+		group.users.add( request.user )
+		group.save()
 
 		return render( request, "Groups/create.html", { "flash" : "Created Group" } )
 
@@ -26,3 +29,9 @@ def group( request, group_id ):
 		Group.users.add( new_member )
 	members = Group.objects.get(pk=group_id).users
 	return render( request, "Groups/index.html", {"members":members} )
+
+@login_required
+def index( request ):
+	user = request.user
+	groups = user.memberships.all()
+	return render( request, "Groups/list.html", {"groups":groups})
