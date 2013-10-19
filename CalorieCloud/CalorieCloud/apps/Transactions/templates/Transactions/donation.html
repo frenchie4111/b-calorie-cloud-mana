@@ -1,0 +1,12 @@
+<div class='center'>
+<h2> Donation </h2>
+	<div>
+		<input name="credit_card_num" onfocus="if (this.value=='Credit Card #') this.value = ''" onblur="if (this.value=='') this.value = 'Credit Card #'" type="text" value="Credit Card #">
+	</div>
+
+	<div>
+	Recipient's Total Calories Burned: <br />
+	<input name="calorie_amount" type="text" style="editable:False" value="{{ resp .calories }}">
+	</div>
+
+</div>

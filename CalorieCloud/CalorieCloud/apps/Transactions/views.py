@@ -1,9 +1,14 @@
 # Create your views here.
 from django.http import HttpResponse
-from ToolShare.helpers import render, redirect
-from CalorieCloud/apps/Transactions import Transaction
+from CalorieCloud.helpers import render, redirect
+from CalorieCloud.apps.Transactions.models import Transaction
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+import datetime
 
-def respondToDonation(request, flash = None, flash_negative = False):
+User = get_user_model()
+
+def respondToDonation(resp, request, flash = None, flash_negative = False):
 	"""
 	Description - Render the Donation Page
 
@@ -15,7 +20,7 @@ def respondToDonation(request, flash = None, flash_negative = False):
 	post:
 		returns a rendered page
 	"""
-	return render(request, "/Tranactions/donation.html", { "flash" : flash, "flash_negative" : flash_negative})
+	return render(request, "Transactions/donation.html", { "resp" : resp, "flash" : flash, "flash_negative" : flash_negative})
 
 def donation(request):
 	"""
@@ -28,4 +33,23 @@ def donation(request):
 		If the request is "GET", show donation page
 		If the request is "POST", process the transaction
 	"""	
-	pass
+	if(request.method == "GET"):
+		recipient = User.objects.get(pk=request.GET["recipient_id"])
+		return respondToDonation(recipient, request, False, False)
+
+	elif(request.method =="POST"):
+		try:
+
+			donor = request.user
+			time = datetime.datetime.now()
+			calorie_amount = request.POST["calorie_amount"]
+			donation_amount = request.POST["donation_amount"]
+			
+
+		except(KeyError):
+			return respondToDonation(request, "Something went terribly wrong", True)
+
+		else:
+			transaction = Transaction(first_name=first_name, last_name=last_name, email=email, time=time, calorie_amount=calorie_amount, donation_amount=donation_amount, recipient=recipient)
+			transaction.save()
+			return redirect("/transaction", {"Transaction Successful" : "True"})
