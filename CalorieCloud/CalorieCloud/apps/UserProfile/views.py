@@ -3,6 +3,7 @@ from CalorieCloud.helpers import render, redirect
 import urllib as urllib2, json
 from django.contrib.auth import get_user_model
 import datetime
+from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth import authenticate as auth, login as auth_login, logout as auth_logout
 

@@ -5,6 +5,7 @@ from CalorieCloud.apps.Transactions.models import Transaction
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 import datetime, urllib as urllib2, json
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 

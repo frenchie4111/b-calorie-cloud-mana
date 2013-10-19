@@ -1,6 +1,7 @@
 from CalorieCloud.helpers import render, redirect
 from CalorieCloud.apps.Groups.models import Group
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 User = get_user_model()
 
 @login_required

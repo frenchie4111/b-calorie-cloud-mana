@@ -6,6 +6,7 @@ from CalorieCloud.apps.Groups.models import Group
 from CalorieCloud.apps.Events.models import Event
 from django.contrib.auth import get_user_model
 import datetime, urllib as urllib2, json
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
