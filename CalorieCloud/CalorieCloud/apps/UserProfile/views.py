@@ -1,9 +1,10 @@
 from CalorieCloud.apps.UserProfile.models import UserProfile
 from CalorieCloud.helpers import render, redirect
-import urllib as urllib2, json
+import urllib2, json
 from django.contrib.auth import get_user_model
 import datetime
 from django.contrib.auth.decorators import login_required
+from CalorieCloud.apps.Transactions.models import Transaction
 
 from django.contrib.auth import authenticate as auth, login as auth_login, logout as auth_logout
 
@@ -24,11 +25,13 @@ def profile_page( request, user_id=None ):
 	"""
 	user = None
 	if( user_id ):
-		user = UserProfile.get(pk=user_id)
+		user = UserProfile.objects.get(pk=user_id)
 	else:
 		user = request.user
 
-	return render( request, "UserProfile/profile.html", { "user" : user } )
+	donations_for = Transaction.objects.filter( recipient=user )
+
+	return render( request, "UserProfile/profile.html", { "user" : user, "donations_for" : donations_for } )
 
 def register( request ):
 	if( request.method == "GET" ):
@@ -55,6 +58,8 @@ def login( request ):
 		return render( request, "UserProfile/login.html" )
 	elif( request.method == "POST" ):
 		user = auth( email=request.POST["username"], password=request.POST["password"] )
+		if( not user ):
+			return render( request, "UserProfile/login.html", {"flash":"Login Failed", "flash_negative":False})
 		auth_login( request, user )
 		return redirect( "/?login_success" )
 
@@ -90,7 +95,6 @@ def update_calories( request ):
 	user.save()
 	return render( request, "core/home_page.html", { "flash" : str(res_dict["data"]["data"][0][1]["m_calories"]) } )
 
-@login_required
 def get_user_info( code ):
 	req = urllib2.Request( "https://jawbone.com/auth/oauth2/token/?client_id=6-jb89a0fSQ&client_secret=30f5af7938b1e51ee6e498c07641b33743e972ba&grant_type=authorization_code&code=" + code )
 	res = urllib2.urlopen( req )

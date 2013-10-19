@@ -21,13 +21,14 @@ def create( request ):
 
 @login_required
 def group( request, group_id ):
+	group = Group.objects.get(pk=group_id)
 	if( request.method == "POST" ):
 		new_memeber_search = User.objects.filter( email=request.POST["email"] )
 		if( len( new_memeber_search ) != 1 ):
 			return render( request, "Groups/index.html", {"flash" : "Could Not Find User"} )
 		new_member = new_memeber_search[0]
-		Group.users.add( new_member )
-	members = Group.objects.get(pk=group_id).users
+		group.users.add( new_member )
+	members = group.users
 	return render( request, "Groups/index.html", {"members":members} )
 
 @login_required

@@ -4,3 +4,9 @@
 	Donate Link : <a href="/transaction/?recipient_id={{ user.id }}">Link</a>
 	Calories : {{ user.calories }}
 </div>
+{% for donation in donations_for %}
+	<div class="content_box">
+		Donor : {{ donation.donor.name }}<br/>
+		Donation Ammount : ${{ donation.donation_amount }}
+	</div>
+{% endfor %}
