@@ -1,3 +1,38 @@
-<div>
-Event Creation
+<div class="center content_box">
+	Event Creation
+	<form method='post' action=''>
+	{% csrf_token %}
+		<div>
+		<br /> Group:
+			<select name="group">
+
+			{% for group in groups %}
+			<option value="{{ group.id }}" >
+				{{ group.name }}
+			</option>
+			{% endfor %}
+			</select>	
+		</div>
+		<div>
+		<br />
+		Description: <br />
+		<a class="form_text"><textarea name="description"></textarea></a><br/>
+		</div>
+		<div>
+		<br />
+		Target Calories: <br />
+		<input type="text" name="target_calories" />
+		</div>
+		<div>
+			<br />
+			Target Date: <br />
+			<input type="text" name="target_date"/>
+		</div>
+
+		<div>
+			<br />
+			Deadline: <br />
+			<input type="text" name="deadline"/>
+		</div>
+		<input type="submit" value="Create Event" />
 </div>

@@ -2,17 +2,20 @@
 from django.http import HttpResponse
 from CalorieCloud.helpers import render, redirect
 from django.contrib.auth.models import User
+from CalorieCloud.apps.Groups.models import Group
+from CalorieCloud.apps.Events.models import Event
 from django.contrib.auth import get_user_model
 import datetime, urllib as urllib2, json
 
 User = get_user_model()
 
-def respondToIndex(request, flash=False, flash_negative=False):
+
+def index(request, event_id, flash=False, flashe_negative = False):
 	return render(request, "Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative})
 
-
 def respondToEventCreation(request, flash=False, flash_negative=False):
-	return render(request, "Events/event_creation.html", { "flash" : flash, "flash_negative" : flash_negative})
+	groups = Group.objects.filter(owner = request.user)
+	return render(request, "Events/event_creation.html", { "flash" : flash, "flash_negative" : flash_negative, "groups" : groups })
 
 def eventCreation(request, flash=False, flash_negative=False):
 	if (request.method == "GET"):
@@ -23,11 +26,13 @@ def eventCreation(request, flash=False, flash_negative=False):
 			description = request.POST["description"]
 			target_calories = request.POST["target_calories"]
 			target_date = request.POST["target_date"]
+			groups = Group.objects.get(pk=request.POST["group"])
 			deadline = request.POST["deadline"]
+			
 		except(KeyError):
-			return respondToEventCreation(request,KeyError, True)
+			return respondToEventCreation(request,str(KeyError), True)
 
 		else:
-			event = Event(owner, description, target_calories, target_date, deadline)
+			event = Event.objects.create(owner=owner, group=group, description=description, target_calories=target_calories, target_date=target_date, deadline=deadline)
 			event.save()
-			return render(request,"Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative, "event_name" : event.name})
+			return render(request,"Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative, "groups": groups})
