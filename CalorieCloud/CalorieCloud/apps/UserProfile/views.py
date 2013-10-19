@@ -56,15 +56,20 @@ def login( request ):
 		auth_login( request, user )
 		return redirect( "/?login_success" )
 
+def logout( request ):
+	auth_logout( request )
+	return redirect( "/" )
+
 def link_jawbone( request ):
 	if( request.method == "GET" ):
 		if( request.user.x_id ):
 			return redirect( "/" )
 		if( "code" in request.GET ): # Response from Jawbone
-			info = get_user_info( request.GET["code"] )
+			token, info = get_user_info( request.GET["code"] )
 			user = request.user
 			user.x_id = info["meta"]["user_xid"]
 			user.image = info["data"]["image"]
+			user.access_token = token
 			user.save()
 			return redirect( "/" )
 		else: #Otherwise do this
@@ -73,7 +78,14 @@ def link_jawbone( request ):
 		pass
 
 def update_calories( request ):
-	pass
+	req = urllib2.Request( "https://jawbone.com/nudge/api/v.1.0/users/@me/trends?range_duration=500&range=w&bucket_size=y" )
+	req.add_header( "Authorization", "Bearer " + request.user.access_token )
+	res = urllib2.urlopen( req )
+	res_dict = json.loads(res.read())
+	user = request.user
+	user.calories = res_dict["data"]["data"][0][1]["m_calories"]
+	user.save()
+	return render( request, "core/home_page.html", { "flash" : str(res_dict["data"]["data"][0][1]["m_calories"]) } )
 
 def get_calorie_count( request ):
 	pass
@@ -85,10 +97,10 @@ def get_user_info( code ):
 	res_dict = json.loads(res.read())
 
 	info_req = urllib2.Request( "https://jawbone.com/nudge/api/v.1.0/users/@me" )
-	req.add_header("Content-type", "application/x-www-form-urlencoded")
-	info_req.add_header( "Accept", "pplication/json")
+	info_req.add_header("Content-type", "application/x-www-form-urlencoded")
+	info_req.add_header( "Accept", "application/json")
 	info_req.add_header( "Authorization", "Bearer " + res_dict["access_token"] )
 	info_res = urllib2.urlopen( info_req )
 	info_dict = json.loads(info_res.read())
 
-	return info_dict
+	return res_dict["access_token"], info_dict

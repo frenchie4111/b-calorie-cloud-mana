@@ -7,6 +7,10 @@ import datetime, urllib as urllib2, json
 
 User = get_user_model()
 
+def respondToIndex(request, flash=False, flash_negative=False):
+	return render(request, "Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative})
+
+
 def respondToEventCreation(request, flash=False, flash_negative=False):
 	return render(request, "Events/event_creation.html", { "flash" : flash, "flash_negative" : flash_negative})
 
@@ -26,4 +30,4 @@ def eventCreation(request, flash=False, flash_negative=False):
 		else:
 			event = Event(owner, description, target_calories, target_date, deadline)
 			event.save()
-			return render(request,"Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative}, "event_name" : event.name)
+			return render(request,"Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative, "event_name" : event.name})
