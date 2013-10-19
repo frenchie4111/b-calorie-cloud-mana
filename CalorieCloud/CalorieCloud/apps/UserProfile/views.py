@@ -25,10 +25,8 @@ def profile_page( request, user_id=None ):
 		user = UserProfile.get(pk=user_id)
 	else:
 		user = request.user
-	if( not user ):
-		return redirect( "/" )
 
-	return render( request, "UserProfile/profile.html" )
+	return render( request, "UserProfile/profile.html", { "user" : user } )
 
 def register( request ):
 	if( request.method == "GET" ):
@@ -50,18 +48,35 @@ def register( request ):
 
 		return redirect( "/user/link_jawbone" )
 
+def login( request ):
+	if( request.method == "GET" ):
+		return render( request, "UserProfile/login.html" )
+	elif( request.method == "POST" ):
+		user = auth( email=request.POST["username"], password=request.POST["password"] )
+		auth_login( request, user )
+		return redirect( "/?login_success" )
+
 def link_jawbone( request ):
 	if( request.method == "GET" ):
+		if( request.user.x_id ):
+			return redirect( "/" )
 		if( "code" in request.GET ): # Response from Jawbone
-			get_user_info( request.GET["code"] )
+			info = get_user_info( request.GET["code"] )
 			user = request.user
 			user.x_id = info["meta"]["user_xid"]
 			user.image = info["data"]["image"]
 			user.save()
+			return redirect( "/" )
 		else: #Otherwise do this
 			return render( request, "UserProfile/link_jawbone.html")
 	elif( request.method == "POST" ):
 		pass
+
+def update_calories( request ):
+	pass
+
+def get_calorie_count( request ):
+	pass
 
 def get_user_info( code ):
 	req = urllib2.Request( "https://jawbone.com/auth/oauth2/token/?client_id=6-jb89a0fSQ&client_secret=30f5af7938b1e51ee6e498c07641b33743e972ba&grant_type=authorization_code&code=" + code )
