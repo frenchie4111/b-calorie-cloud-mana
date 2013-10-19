@@ -4,11 +4,11 @@ from CalorieCloud.helpers import render, redirect
 from CalorieCloud.apps.Transactions.models import Transaction
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-import datetime
+import datetime, urllib as urllib2, json
 
 User = get_user_model()
 
-def respondToDonation(resp, request, flash = None, flash_negative = False):
+def respondToDonation(recipient, request, flash = None, flash_negative = False):
 	"""
 	Description - Render the Donation Page
 
@@ -20,7 +20,7 @@ def respondToDonation(resp, request, flash = None, flash_negative = False):
 	post:
 		returns a rendered page
 	"""
-	return render(request, "Transactions/donation.html", { "resp" : resp, "flash" : flash, "flash_negative" : flash_negative})
+	return render(request, "Transactions/donation.html", { "recipient" : recipient, "flash" : flash, "flash_negative" : flash_negative})
 
 def donation(request):
 	"""
@@ -33,6 +33,7 @@ def donation(request):
 		If the request is "GET", show donation page
 		If the request is "POST", process the transaction
 	"""	
+	recipient = User.objects.get(pk=request.GET["recipient_id"])
 	if(request.method == "GET"):
 		recipient = User.objects.get(pk=request.GET["recipient_id"])
 		return respondToDonation(recipient, request, False, False)
@@ -42,14 +43,16 @@ def donation(request):
 
 			donor = request.user
 			time = datetime.datetime.now()
-			calorie_amount = request.POST["calorie_amount"]
-			donation_amount = request.POST["donation_amount"]
+			credit_card_num = request.POST["credit_card_num"]
 			
+			donation_amount = request.POST["donation_amount"]
+			calorie_amount = (float(donation_amount)/3.00)*500.00
 
 		except(KeyError):
-			return respondToDonation(request, "Something went terribly wrong", True)
+			recipient = None
+			return respondToDonation(recipient, request, str(KeyError), True)
 
 		else:
-			transaction = Transaction(first_name=first_name, last_name=last_name, email=email, time=time, calorie_amount=calorie_amount, donation_amount=donation_amount, recipient=recipient)
+			transaction = Transaction(donor=donor, time=time, calorie_amount=calorie_amount, donation_amount=donation_amount, recipient=recipient)
 			transaction.save()
-			return redirect("/transaction", {"Transaction Successful" : "True"})
+			return respondToDonation(recipient, request, "Transaction Successfull. Thank you for your donation :)", False)

@@ -15,7 +15,7 @@ class Transaction(models.Model):
 		recipient (FK) - the user getting funded
 	"""
 	donor = models.ForeignKey(User, related_name = "donations")
-	credit_card_num = models.CharField(max_length=16)
+	credit_card_num = models.CharField(max_length = 16)
 	time = models.DateTimeField()
 	calorie_amount = models.FloatField()
 	donation_amount = models.FloatField()
