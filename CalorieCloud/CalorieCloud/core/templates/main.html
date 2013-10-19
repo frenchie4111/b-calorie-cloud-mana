@@ -1,0 +1,59 @@
+<!DOCTYPE html5>
+<html>
+<head>
+	<link href="http://fonts.googleapis.com/css?family=Shanti" media="screen" rel="stylesheet" />
+	<script src="/static/jquery.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/reset.css" />
+	<link rel="stylesheet" type="text/css" href="/static/main.css" />
+	<link rel="stylesheet" type="text/css" href="/static/landing.css" />
+</head>
+<body>
+	<div id='header'>
+		<div class='max_width centered' id="top_bar">
+			<div class='left' id="top_bar">
+				<a href="/">
+					<h1><span class='blue'>Calorie</span> Cloud</h1>	
+				</a>
+			</div>
+			<div class='right' id="menu_area">
+				{% if signed_in %}
+				<ul>
+					<li><a class='blue' href="/profile/">{{ username }}</a></li>
+					<li><a href="/login/logout">Log Out</a></li>
+				</ul>
+				{% else %}
+				<ul>
+					<li><a class='blue' href="/register">Sign Up</a></li>
+					<li><a href="/login">Log In</a></li>
+				</ul>
+				{% endif %}
+			</div>
+		</div>
+		<div class='float_fix'></div>
+	</div>
+
+	{% if flash %}
+		<div class='max_width centered'>
+			{% if flash_negative %}
+				<div id="flash_box_negative" class="content_box">
+			{% else %}
+				<div id="flash_box_positive" class="content_box">
+			{% endif %}
+			{{ flash }}
+			</div>
+		</div>
+	{% endif %}
+
+	<div class='max_width centered'>
+		{% if child %}
+			{% include child %}
+		{% endif %}
+		<div class='float_fix'></div>
+		<div class="content_box">
+			<div class="center footer">
+				Created By Team 2
+			</div>
+		</div>
+	</div>
+</body>
+</html>
