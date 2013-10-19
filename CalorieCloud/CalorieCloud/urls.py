@@ -17,4 +17,5 @@ urlpatterns = patterns('',
     url(r'^$', 'CalorieCloud.core.views.home_page', name='home_page'),
     url(r'^user/', include('CalorieCloud.apps.UserProfile.urls')),
     url(r'^transaction/', include('CalorieCloud.apps.Transactions.urls')),
+    url(r'^groups/', include('CalorieCloud.apps.Groups.urls')),
 )

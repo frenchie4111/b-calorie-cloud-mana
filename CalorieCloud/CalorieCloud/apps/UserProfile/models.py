@@ -56,6 +56,7 @@ class UserProfile( AbstractBaseUser, PermissionsMixin ):
 	"""
 	email = models.CharField(max_length=254, unique=True)
 	x_id = models.CharField(max_length=254)
+	access_token = models.CharField( max_length=254 )
 	first_name = models.CharField( max_length=254 )
 	last_name = models.CharField( max_length=254 )
 	image = models.CharField( max_length=254 ) 
