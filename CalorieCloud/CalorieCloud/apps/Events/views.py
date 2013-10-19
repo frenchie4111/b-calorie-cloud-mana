@@ -10,8 +10,9 @@ import datetime, urllib as urllib2, json
 User = get_user_model()
 
 
-def index(request, event_id, flash=False, flashe_negative = False):
-	return render(request, "Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative})
+def index(request, event_id, flash=False, flash_negative = False):
+	event = Event.objects.get(pk=event_id)
+	return render(request, "Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative, "event" : event})
 
 def respondToEventCreation(request, flash=False, flash_negative=False):
 	groups = Group.objects.filter(owner = request.user)
@@ -26,7 +27,7 @@ def eventCreation(request, flash=False, flash_negative=False):
 			description = request.POST["description"]
 			target_calories = request.POST["target_calories"]
 			target_date = request.POST["target_date"]
-			groups = Group.objects.get(pk=request.POST["group"])
+			group = Group.objects.get(pk=request.POST["group"])
 			deadline = request.POST["deadline"]
 			
 		except(KeyError):
@@ -35,4 +36,4 @@ def eventCreation(request, flash=False, flash_negative=False):
 		else:
 			event = Event.objects.create(owner=owner, group=group, description=description, target_calories=target_calories, target_date=target_date, deadline=deadline)
 			event.save()
-			return render(request,"Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative, "groups": groups})
+			return render(request,"Events/index.html",{ "flash" : flash, "flash_negative" : flash_negative})

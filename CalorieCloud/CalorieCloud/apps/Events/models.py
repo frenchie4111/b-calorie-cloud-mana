@@ -12,3 +12,6 @@ class Event(models.Model):
 	target_calories = models.FloatField()
 	target_date = models.CharField(max_length=264)
 	deadline = models.CharField(max_length=264)
+
+	def __str__(self):
+		return self.owner.first_name + " " + self.owner.last_name
